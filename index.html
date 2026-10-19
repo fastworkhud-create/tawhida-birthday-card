@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tawhida Birthday</title>
     <style>
-        body { margin: 0; background: #000; overflow: hidden; font-family: 'Montserrat', sans-serif; cursor: pointer; }
+        body { margin: 0; background: #000; overflow: hidden; font-family: 'Montserrat', sans-serif; cursor: pointer; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: none; }
         canvas { display: block; }
 
         #overlay {
@@ -99,10 +99,22 @@
             particles = new THREE.Points(geo, mat);
             scene.add(particles);
 
-            window.addEventListener('mousedown', () => { isPressing = true; updateUI(true); });
-            window.addEventListener('mouseup', () => { isPressing = false; updateUI(false); });
-            window.addEventListener('touchstart', () => { isPressing = true; updateUI(true); });
-            window.addEventListener('touchend', () => { isPressing = false; updateUI(false); });
+            // Pointer events work consistently on mouse, touch, and mobile Chrome.
+            window.addEventListener('pointerdown', (event) => {
+                event.preventDefault();
+                isPressing = true;
+                updateUI(true);
+            }, { passive: false });
+            window.addEventListener('pointerup', (event) => {
+                event.preventDefault();
+                isPressing = false;
+                updateUI(false);
+            }, { passive: false });
+            window.addEventListener('pointercancel', () => {
+                isPressing = false;
+                updateUI(false);
+            });
+            window.addEventListener('contextmenu', (event) => event.preventDefault());
 
             animate();
         }
